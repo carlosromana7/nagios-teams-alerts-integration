@@ -14,8 +14,17 @@ Este repositorio contiene un script mejorado para integrar **Nagios Core** con *
 ✅ Compatible con cualquier canal de Teams
 
 ---
+### Preparar el webhook en Microsoft Teams
 
-## 📖 Cómo instalarlo
+1. Abre **Microsoft Teams** y selecciona el canal donde quieres recibir las alertas.  
+2. Haz clic en los **tres puntos (…) → Conectores**.  
+3. Busca **Incoming Webhook** y haz clic en **Agregar**.  
+4. Asigna un nombre (por ejemplo, `Nagios`) y opcionalmente sube un ícono.  
+5. Haz clic en **Crear** → copia el enlace del webhook generado → guárdalo, lo necesitarás más adelante.
+
+---
+
+## 📖 Cómo instalarlo el plugin
 
 1. Copia `notify-teams.py` a:
     ```bash
@@ -40,13 +49,35 @@ Este repositorio contiene un script mejorado para integrar **Nagios Core** con *
     ```
 
 4. Configura `contacts.cfg` con tu webhook Teams.
+vim /usr/local/nagios/etc/objects/contacts.cfg
+define contact {
+    contact_name                   teams-contact
+    alias                          Microsoft Teams
+    service_notification_commands  notify_service_teams
+    host_notification_commands     notify_host_teams
+    service_notification_options   w,u,c,r
+    host_notification_options      d,u,r
+    service_notification_period    24x7
+    host_notification_period       24x7
+    service_notification_interval  0
+    host_notification_interval     0
+    _CONTACTWEBHOOKURL             https://tu-webhook-de-teams
+}
 
-5. Recarga Nagios:
+5.  Asociar contacto a un grupo (opcional)
+Edita contactgroups.cfg:
+
+define contactgroup {
+    contactgroup_name       admins
+    alias                  Nagios Administrators
+    members                teams-contact
+}
+6. Recarga Nagios:
     ```bash
     systemctl reload nagios
     ```
 
-6. Prueba manualmente:
+7. Prueba manualmente:
     ```bash
     ./test-teams.sh "PROBLEM: BD/MySQL → DOWN" "Servicio caído"
     ```
