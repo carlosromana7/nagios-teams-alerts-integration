@@ -48,8 +48,8 @@ Este repositorio contiene un script mejorado para integrar **Nagios Core** con *
     }
     ```
 
-4. Configura `contacts.cfg` con tu webhook Teams.
-vim /usr/local/nagios/etc/objects/contacts.cfg
+4. Configura `contacts.cfg` con tu webhook Teams:
+    ```bash
 define contact {
     contact_name                   teams-contact
     alias                          Microsoft Teams
@@ -63,15 +63,16 @@ define contact {
     host_notification_interval     0
     _CONTACTWEBHOOKURL             https://tu-webhook-de-teams
 }
-
+    ```
 5.  Asociar contacto a un grupo (opcional)
 Edita contactgroups.cfg:
-
+    ```bash
 define contactgroup {
     contactgroup_name       admins
     alias                  Nagios Administrators
     members                teams-contact
 }
+    ```
 6. Recarga Nagios:
     ```bash
     systemctl reload nagios
